@@ -71,7 +71,7 @@
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.3s;
-            min-width: 200px;
+            min-width: 220px; /* 稍微加宽以适应新按钮文字 */
         }
         
         .jump-button:hover {
@@ -82,6 +82,15 @@
         .jump-button.primary {
             background-color: #2c5530;
             font-weight: bold;
+        }
+
+        /* 新按钮采用略有区别的绿色，但仍与整体协调 */
+        .jump-button.rewrite {
+            background-color: #3d6b41;
+            font-weight: bold;
+        }
+        .jump-button.rewrite:hover {
+            background-color: #5f8a63;
         }
         
         .jump-button.fallback {
@@ -157,6 +166,10 @@
             <button id="primaryJump" class="jump-button primary">
                 鉴真AI·本地模型
             </button>
+            <!-- 新增按钮：易文通·AI文本改写，链接同第一个按钮 -->
+            <button id="rewriteJump" class="jump-button rewrite">
+                易文通·AI文本改写
+            </button>
             <button id="fallbackJump" class="jump-button fallback">
                  朱雀AI检测助手 
             </button>
@@ -170,10 +183,11 @@
             <h3>使用说明：</h3>
             <ul>
                 <li><strong>本地模型</strong> - 主要服务器（进入后再点击“Visit Site”即可；检测工具不定期开放使用）</li>
+                <li><strong>易文通·AI文本改写</strong> - 专注教育类文本的去AI化（链接同本地模型，即将上线）</li>
                 <li><strong>备用链接</strong> - 本地模型的链接无法访问时使用，或两个工具结合使用</li>
                 <li>如果页面无法正常访问，说明服务器当前未开放</li>
-                <li>您也可以直接点击标题文字跳转到默认链接</li>
-                <li>AIGC改写工具“易文通”即将上线——专注教育类文本的去AI化</li>
+                <li>您也可以直接点击标题文字跳转到默认链接（同本地模型）</li>
+                <li>快捷键：按1本地模型，按2易文通，按3备用链接</li>
             </ul>
         </div>
     </div>
@@ -182,10 +196,13 @@
         // 目标跳转链接
         const primaryUrl = 'https://92f2-101-228-50-47.ngrok-free.app';
         const fallbackUrl = 'https://matrix.tencent.com/ai-detect/';
+        // 易文通使用与第一个按钮相同的链接（根据要求）
+        const rewriteUrl = primaryUrl; 
         
         // 获取元素
         const jumpLink = document.getElementById('jumpLink');
         const primaryButton = document.getElementById('primaryJump');
+        const rewriteButton = document.getElementById('rewriteJump');
         const fallbackButton = document.getElementById('fallbackJump');
         const statusElement = document.getElementById('status');
         
@@ -206,14 +223,19 @@
             }, 300);
         }
         
-        // 标题点击 - 跳转到默认链接
+        // 标题点击 - 跳转到默认链接（本地模型）
         jumpLink.addEventListener('click', function() {
-            performJump(primaryUrl, '默认');
+            performJump(primaryUrl, '默认(本地模型)');
         });
         
-        // 默认链接按钮点击
+        // 默认链接按钮点击（鉴真AI·本地模型）
         primaryButton.addEventListener('click', function() {
-            performJump(primaryUrl, '默认');
+            performJump(primaryUrl, '本地模型');
+        });
+        
+        // 新增按钮点击（易文通·AI文本改写）- 使用相同链接
+        rewriteButton.addEventListener('click', function() {
+            performJump(rewriteUrl, '易文通改写');
         });
         
         // 备用链接按钮点击
@@ -221,14 +243,18 @@
             performJump(fallbackUrl, '备用');
         });
         
-        // 键盘快捷键支持
+        // 键盘快捷键支持（扩展为支持三个按钮）
         document.addEventListener('keydown', function(event) {
-            // 按1选择默认链接
+            // 按1选择默认链接（本地模型）
             if (event.key === '1') {
-                performJump(primaryUrl, '默认');
+                performJump(primaryUrl, '本地模型');
             }
-            // 按2选择备用链接
+            // 按2选择易文通（新增）
             else if (event.key === '2') {
+                performJump(rewriteUrl, '易文通改写');
+            }
+            // 按3选择备用链接（原按2改为按3）
+            else if (event.key === '3') {
                 performJump(fallbackUrl, '备用');
             }
         });
@@ -236,9 +262,10 @@
         // 页面加载完成后的初始化
         window.addEventListener('load', function() {
             console.log('页面加载完成，等待用户选择链接');
-            console.log('默认链接:', primaryUrl);
+            console.log('默认链接(本地模型):', primaryUrl);
+            console.log('易文通链接(同本地):', rewriteUrl);
             console.log('备用链接:', fallbackUrl);
-            console.log('快捷键: 按1选择默认链接，按2选择备用链接');
+            console.log('快捷键: 按1本地模型，按2易文通，按3备用链接');
         });
     </script>
 </body>
