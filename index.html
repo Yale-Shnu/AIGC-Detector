@@ -47,12 +47,7 @@
             color: #5a7d5a;
         }
         
-        .loading {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #666;
-            line-height: 1.6;
-        }
+        /* loading区块已完全删除（原提示文字已移除） */
         
         .buttons {
             margin-top: 30px;
@@ -71,7 +66,7 @@
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.3s;
-            min-width: 220px; /* 稍微加宽以适应新按钮文字 */
+            min-width: 220px;
         }
         
         .jump-button:hover {
@@ -84,7 +79,7 @@
             font-weight: bold;
         }
 
-        /* 新按钮采用略有区别的绿色，但仍与整体协调 */
+        /* 易文通按钮采用略有区别的绿色，文字已改为“易文通·本地模型” */
         .jump-button.rewrite {
             background-color: #3d6b41;
             font-weight: bold;
@@ -157,41 +152,48 @@
     <div class="container">
         <img src="logo.png" alt="鉴真AIGC检测器（本地模型）" class="logo">
         <h1 id="jumpLink">AIGC检测/改写工具</h1>        
-        <div class="loading">
-            请选择要访问的链接（本地模型的服务器按需定时开放）
-        </div>        
+        
+        <!-- 原loading区块已完全删除（曾显示“请选择要访问的链接...”） -->
+        
         <div class="buttons">
             <button id="primaryJump" class="jump-button primary">
                 鉴真AI·本地模型
             </button>
-            <!-- 新增按钮：易文通·AI文本改写，链接同第一个按钮 -->
+            <!-- 新增按钮：文字已改为“易文通·本地模型”，链接已独立（下方JS中定义） -->
             <button id="rewriteJump" class="jump-button rewrite">
-                易文通·AI文本改写
+                易文通·本地模型
             </button>
             <button id="fallbackJump" class="jump-button fallback">
                  朱雀AI检测助手 
             </button>
         </div>        
-        <div id="status" class="status info">
-            请点击上方按钮选择要访问的链接
-        </div>        
+        
+        <!-- 状态条初始文字已清空（原“请点击上方按钮...”已删除） -->
+        <div id="status" class="status info"></div>        
+        
         <div class="instructions">
             <h3>使用说明：</h3>
             <ul>
                 <li><strong>鉴真AI</strong> - AIGC检测的本地模型版（进入后再点击“Visit Site”即可）</li>
-                <li><strong>易文通·AI文本改写</strong> - 专注教育类文本的去AI化（本地模型测试版，因服务器配置较低，不要输入超过500字的长文本。且要等页面有“模型已连接”的提示后再检测）</li>
+                <!-- 下方strong文字同步改为“易文通·本地模型”，与按钮一致 -->
+                <li><strong>易文通·本地模型</strong> - 专注教育类文本的去AI化（本地模型测试版，因服务器配置较低，不要输入超过500字的长文本。且要等页面有“模型已连接”的提示后再检测）</li>
                 <li><strong>备用链接</strong> - 腾讯开发的朱雀AI检测助手官网</li>
-                <li>AIGC检测与改写工具不定期交替开放使用，如果页面无法正常访问，说明服务器当前未开放</li>
+                <li>基于本地模型和服务器的AIGC检测与改写工具——不定期交替开放使用，如果页面无法正常访问，说明服务器当前未开放</li>
             </ul>
         </div>
     </div>
 
     <script>
-        // 目标跳转链接
+        // --- 链接配置区（可独立修改）---
+        // 鉴真AI·本地模型 链接
         const primaryUrl = 'https://f6f7-117-143-18-50.ngrok-free.app';
+        
+        // 易文通·本地模型 链接 —— 现已独立，不与上方相同，便于单独修改
+        // 请将下方链接替换为实际的易文通独立地址
+        const rewriteUrl = 'https://易文通独立链接.example/yiwen';  // ⚠️ 请修改为真实链接
+        
+        // 朱雀AI检测助手 备用链接
         const fallbackUrl = 'https://matrix.tencent.com/ai-detect/';
-        // 易文通使用与第一个按钮相同的链接（根据要求）
-        const rewriteUrl = primaryUrl; 
         
         // 获取元素
         const jumpLink = document.getElementById('jumpLink');
@@ -222,14 +224,14 @@
             performJump(primaryUrl, '默认(本地模型)');
         });
         
-        // 默认链接按钮点击（鉴真AI·本地模型）
+        // 鉴真AI·本地模型 按钮点击
         primaryButton.addEventListener('click', function() {
             performJump(primaryUrl, '本地模型');
         });
         
-        // 新增按钮点击（易文通·AI文本改写）- 使用相同链接
+        // 易文通·本地模型 按钮点击 —— 使用独立的 rewriteUrl
         rewriteButton.addEventListener('click', function() {
-            performJump(rewriteUrl, '易文通改写');
+            performJump(rewriteUrl, '易文通·本地模型');  // 状态提示也相应调整
         });
         
         // 备用链接按钮点击
@@ -237,17 +239,17 @@
             performJump(fallbackUrl, '备用');
         });
         
-        // 键盘快捷键支持（扩展为支持三个按钮）
+        // 键盘快捷键支持（1:本地模型, 2:易文通·本地模型, 3:备用）
         document.addEventListener('keydown', function(event) {
-            // 按1选择默认链接（本地模型）
+            // 按1选择本地模型（鉴真AI）
             if (event.key === '1') {
                 performJump(primaryUrl, '本地模型');
             }
-            // 按2选择易文通（新增）
+            // 按2选择易文通·本地模型（独立链接）
             else if (event.key === '2') {
-                performJump(rewriteUrl, '易文通改写');
+                performJump(rewriteUrl, '易文通·本地模型');
             }
-            // 按3选择备用链接（原按2改为按3）
+            // 按3选择备用链接
             else if (event.key === '3') {
                 performJump(fallbackUrl, '备用');
             }
@@ -256,10 +258,11 @@
         // 页面加载完成后的初始化
         window.addEventListener('load', function() {
             console.log('页面加载完成，等待用户选择链接');
-            console.log('默认链接(本地模型):', primaryUrl);
-            console.log('易文通链接(同本地):', rewriteUrl);
+            console.log('鉴真AI·本地模型:', primaryUrl);
+            console.log('易文通·本地模型 (独立链接):', rewriteUrl);  // 确认独立
             console.log('备用链接:', fallbackUrl);
-            console.log('快捷键: 按1本地模型，按2易文通，按3备用链接');
+            console.log('快捷键: 按1本地模型(鉴真)，按2易文通·本地模型，按3备用链接');
+            // 状态条初始为空，不显示任何提示文字，符合删除要求
         });
     </script>
 </body>
